@@ -14,3 +14,4 @@ Before running the application, make sure to set the following environment varia
 | `DB_PASSWORD`  | Password for database connection     |
 | `DB_URL`       | JDBC URL for the database connection |
 | `FRONTEND_URL` | URL of the frontend application      |
+| `SECRET_KEY`   | Secret key for Jwt token creation    |
