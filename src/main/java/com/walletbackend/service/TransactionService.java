@@ -9,6 +9,7 @@ import com.walletbackend.entity.Transaction;
 import com.walletbackend.entity.User;
 import com.walletbackend.enums.PaymentStatus;
 import com.walletbackend.enums.PaymentType;
+import com.walletbackend.enums.UserRole;
 import com.walletbackend.exception.InvalidInputDataException;
 import com.walletbackend.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
@@ -66,6 +67,18 @@ public class TransactionService {
                 .sum();
     }
 
+    public Double getTotalWithdrawnAmountByUser(User user) {
+        List<Transaction> withdrawTransactions = transactionRepository.findAllByUserAndType(user, PaymentType.WITHDRAW);
+
+        if (withdrawTransactions == null || withdrawTransactions.isEmpty()) {
+            return 0.0;
+        }
+
+        return withdrawTransactions.stream()
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+    }
+
     public List<TransactionResponseDTO> getTopNTransactions(User user, int n) {
         return transactionRepository
                 .findNMostRecentTransactionsByUserId(user.getId(), n)
@@ -83,7 +96,11 @@ public class TransactionService {
 
     public TransactionDetailResponseDTO getTransactionDetailById(Long id) {
         User loggedInUser = userService.getLoggedInUser();
-        Transaction transaction = transactionRepository.findByIdAndUser(id, loggedInUser);
+        Transaction transaction;
+        if(loggedInUser.getUserRole() == UserRole.ADMIN)
+            transaction = transactionRepository.findById(id).orElseGet(null);
+        else
+            transaction = transactionRepository.findByIdAndUser(id, loggedInUser);
         if (transaction == null) {
             throw new InvalidInputDataException(ErrorMessage.TRANSACTION_NOT_FOUND);
         }
@@ -111,5 +128,9 @@ public class TransactionService {
                 .build();
 
         transactionRepository.save(transaction);
+    }
+
+    public List<Transaction> findAllTransactionByStatus(PaymentStatus status) {
+        return transactionRepository.findAllByStatus(status);
     }
 }

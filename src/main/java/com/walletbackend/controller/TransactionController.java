@@ -29,7 +29,7 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @PostMapping(ApiConstant.CREATE_TRANSACTION)
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Transaction> createTransaction(@Valid @RequestBody TransactionDTO transactionDTO) {
         return new ResponseEntity<>(transactionService.createTransaction(transactionDTO), HttpStatus.OK);
     }

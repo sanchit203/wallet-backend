@@ -19,6 +19,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -128,5 +130,9 @@ public class UserService {
                 .nameOnBankAccount(loggedInUser.getNameOnBankAccount())
                 .ifscCode(loggedInUser.getIfscCode())
                 .build();
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 }
