@@ -12,4 +12,7 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationConfig {
     @Value("${FRONTEND_URL}")
     private String frontendUrl;
+
+    @Value("${SECRET_KEY}")
+    private String secretKey;
 }

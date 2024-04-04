@@ -1,8 +1,10 @@
 package com.walletbackend.util;
 
+import com.walletbackend.config.ApplicationConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -17,8 +19,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class JwtUtil {
-    private static final String SECRET_KEY = "597133743677397A24432646294A404E635166546A576E5A7234753778214125";
+    private final ApplicationConfig applicationConfig;
     private static final int TOKEN_VALIDITY = 86400;
     public String getUserNameFromToken(String token){
         return getClaimFromToken(token, Claims::getSubject);
@@ -28,7 +31,7 @@ public class JwtUtil {
         return claimResolver.apply(claims);
     }
     private Claims getAllClaimsFromToken(String token){
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(applicationConfig.getSecretKey()).parseClaimsJws(token).getBody();
     }
     public boolean validateToken(String token, UserDetails userDetails){
         String userName = getUserNameFromToken(token);
@@ -57,7 +60,7 @@ public class JwtUtil {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY*1000))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS256, applicationConfig.getSecretKey())
                 .compact();
     }
 }
