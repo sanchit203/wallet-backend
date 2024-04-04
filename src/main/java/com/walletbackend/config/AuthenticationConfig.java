@@ -39,7 +39,7 @@ public class AuthenticationConfig {
                 .authorizeHttpRequests(
                         auth -> auth
                                 .requestMatchers(ApiConstant.AUTH + Constant.ALL_CHILD_ROUTES).permitAll()
-//                                .requestMatchers(ApiConstant.HEALTH_PREFIX).permitAll()
+                                .requestMatchers(ApiConstant.HEALTH_PREFIX).permitAll()
                                 .anyRequest().authenticated()
                 );
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
