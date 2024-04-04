@@ -1,9 +1,11 @@
 package com.walletbackend.controller;
 
 import com.walletbackend.constants.ApiConstant;
+import com.walletbackend.constants.Constant;
 import com.walletbackend.dto.AdminViewResponseDTO;
 import com.walletbackend.dto.AdminViewUserResponseDTO;
 import com.walletbackend.dto.TransactionResponseDTO;
+import com.walletbackend.dto.UpdateWithdrawlBalanceDTO;
 import com.walletbackend.dto.UserBankDetailResponseDTO;
 import com.walletbackend.dto.UserBankDetailsRequestDTO;
 import com.walletbackend.dto.UserProfileResponseDTO;
@@ -105,5 +107,12 @@ public class UserDetailsController {
                 .totalAmountCredited(totalInvested)
                 .userResponseDTO(userAdminViewUserResponseDTOMap)
                 .build(), HttpStatus.OK);
+    }
+
+    @PostMapping(ApiConstant.UPDATE_WITHDRAWL_BALANCE)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<String> updateWithdrawlBalance(@Valid @RequestBody UpdateWithdrawlBalanceDTO updateWithdrawlBalanceDTO) {
+        userService.updateWithDrawlBalance(updateWithdrawlBalanceDTO);
+        return new ResponseEntity<>(Constant.WITHDRAWL_BALANCE_UPDATED, HttpStatus.OK);
     }
 }

@@ -15,10 +15,8 @@ import lombok.NoArgsConstructor;
 public class TransactionDTO {
     @JsonProperty("amount")
     private Double amount;
-
-    @JsonProperty("status")
-    private PaymentStatus status;
-
     @JsonProperty("type")
     private PaymentType type;
+    @JsonProperty("id")
+    private Long id;
 }

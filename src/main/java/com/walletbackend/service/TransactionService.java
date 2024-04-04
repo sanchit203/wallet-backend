@@ -1,6 +1,7 @@
 package com.walletbackend.service;
 
 import com.walletbackend.constants.ErrorMessage;
+import com.walletbackend.dto.CreateTransactionResponseDTO;
 import com.walletbackend.dto.CreateWithdrawRequestDTO;
 import com.walletbackend.dto.TransactionDTO;
 import com.walletbackend.dto.TransactionDetailResponseDTO;
@@ -24,19 +25,47 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
 
-    public Transaction createTransaction(TransactionDTO transactionDTO){
-        User loggedInUser = userService.getLoggedInUser();
+    public CreateTransactionResponseDTO createTransaction(TransactionDTO transactionDTO){
+        User user = userService.findById(transactionDTO.getId());
         Transaction newTransaction = Transaction
                 .builder()
                 .type(transactionDTO.getType())
-                .status(transactionDTO.getStatus())
+                .status(PaymentStatus.SUCCESS)
                 .amount(transactionDTO.getAmount())
-                .user(loggedInUser)
+                .user(user)
                 .build();
 
         transactionRepository.save(newTransaction);
 
-        return newTransaction;
+        List<TransactionResponseDTO> transactionResponseDTOS = transactionRepository
+                .findAllByUser(user)
+                .stream()
+                .map(transaction -> TransactionResponseDTO
+                        .builder()
+                        .id(transaction.getId())
+                        .type(transaction.getType())
+                        .date(transaction.getCreatedAt())
+                        .amount(transaction.getAmount())
+                        .build()
+                )
+                .toList();
+
+        List<Transaction> transactions = findAllTransactionByStatus(PaymentStatus.SUCCESS);
+        Double totalInvested = transactions.stream()
+                .filter(transaction -> transaction.getType() == PaymentType.ADD)
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+        Double totalWithdrawn = transactions.stream()
+                .filter(transaction -> transaction.getType() == PaymentType.WITHDRAW)
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+        return CreateTransactionResponseDTO.builder()
+                .transactions(transactionResponseDTOS)
+                .totalInvestedAmount(totalInvested)
+                .totalWithdrawl(totalWithdrawn)
+                .build();
     }
 
     public List<TransactionResponseDTO> getAllTransactionByUser() {
@@ -116,7 +145,8 @@ public class TransactionService {
 
     public void createWithDrawRequest(CreateWithdrawRequestDTO createWithdrawRequestDTO) {
         User loggedInUser = userService.getLoggedInUser();
-        if(createWithdrawRequestDTO.getAmount() > loggedInUser.getWithdrawableAmount()) {
+        Double alreadyWithdrawnAmount = getTotalWithdrawnAmountByUser(loggedInUser);
+        if(createWithdrawRequestDTO.getAmount() > loggedInUser.getWithdrawableAmount() - alreadyWithdrawnAmount) {
             throw new  InvalidInputDataException(ErrorMessage.INVALID_WITHDRAW_AMOUNT);
         }
         Transaction transaction = Transaction

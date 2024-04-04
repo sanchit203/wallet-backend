@@ -2,6 +2,7 @@ package com.walletbackend.controller;
 
 import com.walletbackend.constants.ApiConstant;
 import com.walletbackend.constants.Constant;
+import com.walletbackend.dto.CreateTransactionResponseDTO;
 import com.walletbackend.dto.CreateWithdrawRequestDTO;
 import com.walletbackend.dto.TransactionDTO;
 import com.walletbackend.dto.TransactionDetailResponseDTO;
@@ -30,7 +31,7 @@ public class TransactionController {
 
     @PostMapping(ApiConstant.CREATE_TRANSACTION)
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Transaction> createTransaction(@Valid @RequestBody TransactionDTO transactionDTO) {
+    public ResponseEntity<CreateTransactionResponseDTO> createTransaction(@Valid @RequestBody TransactionDTO transactionDTO) {
         return new ResponseEntity<>(transactionService.createTransaction(transactionDTO), HttpStatus.OK);
     }
 

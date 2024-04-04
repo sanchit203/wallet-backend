@@ -17,11 +17,12 @@ public class HomePageService {
     public HomePageResponseDTO getHomePageResponse() {
         User loggedInUser = userService.getLoggedInUser();
         Double totalInvestedAmount = transactionService.getTotalInvestedAmountByUser(loggedInUser);
+        Double alreadyWithdrawnAmount = transactionService.getTotalWithdrawnAmountByUser(loggedInUser);
         List<TransactionResponseDTO> transactionResponseDTOList = transactionService.getTopNTransactions(loggedInUser, 3);
         return HomePageResponseDTO
                 .builder()
                 .totalInvested(totalInvestedAmount)
-                .withdrawable(loggedInUser.getWithdrawableAmount())
+                .withdrawable(loggedInUser.getWithdrawableAmount() - alreadyWithdrawnAmount)
                 .transactions(transactionResponseDTOList)
                 .build();
     }

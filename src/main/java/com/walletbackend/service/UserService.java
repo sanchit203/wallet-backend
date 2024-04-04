@@ -3,6 +3,7 @@ package com.walletbackend.service;
 import com.walletbackend.constants.Constant;
 import com.walletbackend.constants.ErrorMessage;
 import com.walletbackend.constants.UniqueConstraintName;
+import com.walletbackend.dto.UpdateWithdrawlBalanceDTO;
 import com.walletbackend.dto.UserBankDetailResponseDTO;
 import com.walletbackend.dto.UserBankDetailsRequestDTO;
 import com.walletbackend.dto.UserDTO;
@@ -134,5 +135,22 @@ public class UserService {
 
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+    public void updateWithDrawlBalance(UpdateWithdrawlBalanceDTO updateWithdrawlBalanceDTO) {
+        User user = findById(updateWithdrawlBalanceDTO.id);
+
+        user.setWithdrawableAmount(updateWithdrawlBalanceDTO.getAmount());
+
+        userRepository.save(user);
+    }
+
+    public User findById(Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if(user == null) {
+            throw new InvalidInputDataException(ErrorMessage.USER_NOT_FOUND);
+        }
+
+        return user;
     }
 }

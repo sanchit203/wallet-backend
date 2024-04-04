@@ -15,4 +15,5 @@ public final class ApiConstant {
     public static final String CREATE_WITHDRAW_REQUEST = "/create-withdraw-request";
     public static final String WITHDRAW_PAGE = "/withdraw";
     public static final String GET_ALL_USERS = "/get-all";
+    public static final String UPDATE_WITHDRAWL_BALANCE = "/update-withdrawl-balance";
 }

@@ -16,4 +16,5 @@ public final class ErrorMessage {
     public static final String ACCOUNT_NUMBER_CANNOT_BE_EMPTY = "Account number cannot be empty";
     public static final String INVALID_ACCOUNT_NUMBER = "Please enter a valid account number";
     public static final String IFSC_CANNOT_BE_EMPTY = "Ifsc code cannot be empty";
+    public static final String USER_NOT_FOUND = "User not found";
 }
