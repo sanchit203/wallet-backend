@@ -3,7 +3,10 @@ package com.walletbackend.service;
 import com.walletbackend.constants.Constant;
 import com.walletbackend.constants.ErrorMessage;
 import com.walletbackend.constants.UniqueConstraintName;
+import com.walletbackend.dto.UserBankDetailResponseDTO;
+import com.walletbackend.dto.UserBankDetailsRequestDTO;
 import com.walletbackend.dto.UserDTO;
+import com.walletbackend.dto.UserProfileResponseDTO;
 import com.walletbackend.entity.User;
 import com.walletbackend.enums.UserRole;
 import com.walletbackend.exception.UniqueKeyViolationException;
@@ -68,5 +71,43 @@ public class UserService {
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public UserProfileResponseDTO getUserProfileResponseDTO() {
+        User loggedInUser = getLoggedInUser();
+        return UserProfileResponseDTO
+                .builder()
+                .email(loggedInUser.getEmail())
+                .name(loggedInUser.getName())
+                .phoneNumber(loggedInUser.getPhoneNumber())
+                .username(loggedInUser.getUsername())
+                .build();
+    }
+
+    public UserBankDetailResponseDTO getUserBankDetailResponseDTO() {
+        User loggedInUser = getLoggedInUser();
+        return UserBankDetailResponseDTO
+                .builder()
+                .bankAccountNumber(loggedInUser.getBankAccountNumber())
+                .nameOnBankAccount(loggedInUser.getNameOnBankAccount())
+                .ifscCode(loggedInUser.getIfscCode())
+                .build();
+    }
+
+    public UserBankDetailResponseDTO updateUserBankDetails(UserBankDetailsRequestDTO userBankDetailsRequestDTO) {
+        User loggedInUser = getLoggedInUser();
+
+        loggedInUser.setBankAccountNumber(userBankDetailsRequestDTO.getBankAccountNumber());
+        loggedInUser.setIfscCode(userBankDetailsRequestDTO.getIfscCode());
+        loggedInUser.setNameOnBankAccount(userBankDetailsRequestDTO.getNameOnBankAccount());
+
+        userRepository.save(loggedInUser);
+
+        return UserBankDetailResponseDTO
+                .builder()
+                .bankAccountNumber(loggedInUser.getBankAccountNumber())
+                .nameOnBankAccount(loggedInUser.getNameOnBankAccount())
+                .ifscCode(loggedInUser.getIfscCode())
+                .build();
     }
 }
