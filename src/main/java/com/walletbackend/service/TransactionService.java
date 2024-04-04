@@ -38,7 +38,7 @@ public class TransactionService {
         transactionRepository.save(newTransaction);
 
         List<TransactionResponseDTO> transactionResponseDTOS = transactionRepository
-                .findAllByUser(user)
+                .findAllByUserAndStatus(user, PaymentStatus.SUCCESS)
                 .stream()
                 .map(transaction -> TransactionResponseDTO
                         .builder()

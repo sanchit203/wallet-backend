@@ -20,4 +20,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     Transaction findByIdAndUser(Long id, User user);
 
     List<Transaction> findAllByStatus(PaymentStatus status);
+
+    List<Transaction> findAllByUserAndStatus(User user, PaymentStatus status);
 }
