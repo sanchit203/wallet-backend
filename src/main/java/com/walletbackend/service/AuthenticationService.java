@@ -7,6 +7,7 @@ import com.walletbackend.dto.AuthenticationRequest;
 import com.walletbackend.dto.UserDTO;
 import com.walletbackend.entity.User;
 import com.walletbackend.exception.AuthenticationException;
+import com.walletbackend.exception.InvalidInputDataException;
 import com.walletbackend.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -61,8 +62,36 @@ public class AuthenticationService implements UserDetailsService {
     }
 
     public AuthenticationResponse createUser(UserDTO userDTO) {
+        if (userDTO.getName().isEmpty()) {
+            throw new InvalidInputDataException(ErrorMessage.NAME_CANNOT_BE_EMPTY);
+        }
+        if (userDTO.getEmail().isEmpty()) {
+            throw new InvalidInputDataException(ErrorMessage.EMAIL_CANNOT_BE_EMPTY);
+        }
+        if (userDTO.getPhoneNumber().length() != 10) {
+            throw new InvalidInputDataException(ErrorMessage.INVALID_PHONE_NUMBER);
+        }
+
+        if (userDTO.getPhoneNumber().charAt(0) == '0') {
+            throw new InvalidInputDataException(ErrorMessage.INVALID_PHONE_NUMBER);
+        }
+
+        for (int i = 0; i < userDTO.getPhoneNumber().length(); i++) {
+            if (!Character.isDigit(userDTO.getPhoneNumber().charAt(i))) {
+                throw new InvalidInputDataException(ErrorMessage.INVALID_PHONE_NUMBER);
+            }
+        }
+        if (userDTO.getUsername().isEmpty()) {
+            throw new InvalidInputDataException(ErrorMessage.USERNAME_CANNOT_BE_EMPTY);
+        }
+        if (userDTO.getPassword().isEmpty()) {
+            throw new InvalidInputDataException(ErrorMessage.PASSWORD_CANNOT_BE_EMPTY);
+        }
+        if (userDTO.getPassword().length() < 8) {
+            throw new InvalidInputDataException(ErrorMessage.PASSWORD_LENGTH_ERROR);
+        }
         User newUser = userService.createUser(userDTO);
-        final UserDetails userDetails = new  org.springframework.security.core.userdetails.User(newUser.getUsername(), newUser.getPassword(), getAuthorities(newUser));
+        final UserDetails userDetails = new org.springframework.security.core.userdetails.User(newUser.getUsername(), newUser.getPassword(), getAuthorities(newUser));
         String newGeneratedToken = jwtUtil.generateToken(userDetails);
         return new AuthenticationResponse(newGeneratedToken);
     }

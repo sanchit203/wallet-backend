@@ -9,6 +9,7 @@ import com.walletbackend.dto.UserDTO;
 import com.walletbackend.dto.UserProfileResponseDTO;
 import com.walletbackend.entity.User;
 import com.walletbackend.enums.UserRole;
+import com.walletbackend.exception.InvalidInputDataException;
 import com.walletbackend.exception.UniqueKeyViolationException;
 import com.walletbackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -96,6 +97,24 @@ public class UserService {
 
     public UserBankDetailResponseDTO updateUserBankDetails(UserBankDetailsRequestDTO userBankDetailsRequestDTO) {
         User loggedInUser = getLoggedInUser();
+
+        if(userBankDetailsRequestDTO.getNameOnBankAccount().isEmpty()) {
+            throw new InvalidInputDataException(ErrorMessage.NAME_CANNOT_BE_EMPTY);
+        }
+
+        if(userBankDetailsRequestDTO.getBankAccountNumber().isEmpty()) {
+            throw new InvalidInputDataException(ErrorMessage.ACCOUNT_NUMBER_CANNOT_BE_EMPTY);
+        }
+
+        for (int i = 0; i < userBankDetailsRequestDTO.getBankAccountNumber().length(); i++) {
+            if (!Character.isDigit(userBankDetailsRequestDTO.getBankAccountNumber().charAt(i))) {
+                throw new InvalidInputDataException(ErrorMessage.INVALID_ACCOUNT_NUMBER);
+            }
+        }
+
+        if(userBankDetailsRequestDTO.getIfscCode().isEmpty()) {
+            throw new InvalidInputDataException(ErrorMessage.IFSC_CANNOT_BE_EMPTY);
+        }
 
         loggedInUser.setBankAccountNumber(userBankDetailsRequestDTO.getBankAccountNumber());
         loggedInUser.setIfscCode(userBankDetailsRequestDTO.getIfscCode());
