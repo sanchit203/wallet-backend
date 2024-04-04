@@ -6,6 +6,7 @@ import com.walletbackend.dto.CreateWithdrawRequestDTO;
 import com.walletbackend.dto.TransactionDTO;
 import com.walletbackend.dto.TransactionDetailResponseDTO;
 import com.walletbackend.dto.TransactionResponseDTO;
+import com.walletbackend.dto.WithdrawRequestResponseDTO;
 import com.walletbackend.entity.Transaction;
 import com.walletbackend.entity.User;
 import com.walletbackend.enums.PaymentStatus;
@@ -162,5 +163,21 @@ public class TransactionService {
 
     public List<Transaction> findAllTransactionByStatus(PaymentStatus status) {
         return transactionRepository.findAllByStatus(status);
+    }
+
+    public List<WithdrawRequestResponseDTO> getAllWithdrawRequest() {
+        return transactionRepository
+                .findAllByStatus(PaymentStatus.PENDING)
+                .stream()
+                .map(transaction -> WithdrawRequestResponseDTO.builder()
+                        .Amount(transaction.getAmount())
+                        .name(transaction.getUser().getName())
+                        .bankAccountNumber(transaction.getUser().getBankAccountNumber())
+                        .phoneNumber(transaction.getUser().getPhoneNumber())
+                        .nameOnBankAccount(transaction.getUser().getNameOnBankAccount())
+                        .ifscCode(transaction.getUser().getIfscCode())
+                        .id(transaction.getId())
+                        .build())
+                .toList();
     }
 }

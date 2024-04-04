@@ -7,7 +7,7 @@ import com.walletbackend.dto.CreateWithdrawRequestDTO;
 import com.walletbackend.dto.TransactionDTO;
 import com.walletbackend.dto.TransactionDetailResponseDTO;
 import com.walletbackend.dto.TransactionResponseDTO;
-import com.walletbackend.entity.Transaction;
+import com.walletbackend.dto.WithdrawRequestResponseDTO;
 import com.walletbackend.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -49,5 +49,11 @@ public class TransactionController {
     public ResponseEntity<String> createWithDrawRequest(@Valid @RequestBody CreateWithdrawRequestDTO createWithdrawRequestDTO) {
         transactionService.createWithDrawRequest(createWithdrawRequestDTO);
         return new ResponseEntity<>(Constant.WITHDRAW_REQUEST_CREATED, HttpStatus.OK);
+    }
+
+    @GetMapping(ApiConstant.GET_ALL_WITHDRAW_REQUEST)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<List<WithdrawRequestResponseDTO>> getAllWithdrawRequest() {
+        return new ResponseEntity<>(transactionService.getAllWithdrawRequest(), HttpStatus.OK);
     }
 }
