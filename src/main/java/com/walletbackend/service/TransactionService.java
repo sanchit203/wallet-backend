@@ -170,7 +170,7 @@ public class TransactionService {
                 .findAllByStatus(PaymentStatus.PENDING)
                 .stream()
                 .map(transaction -> WithdrawRequestResponseDTO.builder()
-                        .Amount(transaction.getAmount())
+                        .amount(transaction.getAmount())
                         .name(transaction.getUser().getName())
                         .bankAccountNumber(transaction.getUser().getBankAccountNumber())
                         .phoneNumber(transaction.getUser().getPhoneNumber())
@@ -179,5 +179,17 @@ public class TransactionService {
                         .id(transaction.getId())
                         .build())
                 .toList();
+    }
+
+    public void updateWithdrawRequest(Long id) {
+        Transaction transaction = transactionRepository.findById(id).orElseGet(null);
+
+        if(transaction==null || transaction.getType()==PaymentType.ADD || transaction.getStatus()==PaymentStatus.SUCCESS){
+            throw new InvalidInputDataException(ErrorMessage.WITHDRAW_REQUEST_NOT_FOUND);
+        }
+
+        transaction.setStatus(PaymentStatus.SUCCESS);
+
+        transactionRepository.save(transaction);
     }
 }

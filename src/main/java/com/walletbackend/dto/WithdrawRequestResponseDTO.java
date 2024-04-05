@@ -16,5 +16,5 @@ public class WithdrawRequestResponseDTO {
     public String bankAccountNumber;
     public String ifscCode;
     public String nameOnBankAccount;
-    public Double Amount;
+    public Double amount;
 }

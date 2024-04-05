@@ -8,4 +8,5 @@ public final class Constant {
     public static final String BEARER_WITH_SPACE = "Bearer ";
     public static final String WITHDRAW_REQUEST_CREATED = "Withdraw request created";
     public static final String WITHDRAWL_BALANCE_UPDATED = "Withdrawl balance updated";
+    public static final String WITHDRAW_REQUEST_COMPLETED = "Withdraw request completed successfully";
 }

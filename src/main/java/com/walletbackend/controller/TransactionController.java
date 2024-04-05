@@ -56,4 +56,11 @@ public class TransactionController {
     public ResponseEntity<List<WithdrawRequestResponseDTO>> getAllWithdrawRequest() {
         return new ResponseEntity<>(transactionService.getAllWithdrawRequest(), HttpStatus.OK);
     }
+
+    @PostMapping(ApiConstant.UPDATE_WITHDRAW_REQUEST + "/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<String> updateWithdrawRequest(@PathVariable Long id) {
+        transactionService.updateWithdrawRequest(id);
+        return new ResponseEntity<>(Constant.WITHDRAW_REQUEST_COMPLETED, HttpStatus.OK);
+    }
 }
